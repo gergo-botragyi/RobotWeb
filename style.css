@@ -5,6 +5,7 @@
 
 body{
     background-color:lightskyblue;
+    user-select: none;
 }
 
 .asd{
@@ -50,8 +51,13 @@ body{
     align-items: center;
 }
 
-#kezi{
-    padding-top: 50px;
+input[type=range]::-webkit-slider-runnable-track{
+    width: 100%;
+}
+
+#speed{
+    padding: 20px 0 20px 0;
+    width: 900px;
 }
 
 @media screen and (max-width: 965px) {
@@ -94,10 +100,6 @@ body{
         align-items: center;
     }
 
-    #kezi{
-        padding-top: 20px;
-    }
-
     #cim{
         width: 100%;
     }
@@ -106,5 +108,14 @@ body{
         position: fixed;
         bottom: 20px;
         width: 100%;
+    }
+
+    input[type=range]::-webkit-slider-runnable-track{
+        width: 100%;
+    }
+    
+    #speed{
+        padding: 10px 0 10px 0;
+        width: 300px;
     }
 }

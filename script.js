@@ -1,6 +1,8 @@
+import { init, move } from "./lib.js"
+
 init();
 
-let speed = 0,
+let speed = 50,
   moving = false;
 
 const speedSlider = document.getElementById("speed"),
@@ -16,21 +18,21 @@ const speedSlider = document.getElementById("speed"),
       element: document.getElementById("down"),
       keys: ["arrowdown", "s"],
       onPress: () => {
-        move({ left: speed, right: speed });
+        move({ left: speed * -1, right: speed * -1 });
       },
     },
     left: {
       element: document.getElementById("left"),
       keys: ["arrowleft", "a"],
       onPress: () => {
-        move({ left: 0, right: speed });
+        move({ left: speed * -1, right: speed });
       },
     },
     right: {
       element: document.getElementById("right"),
       keys: ["arrowright", "d"],
       onPress: () => {
-        move({ left: speed, right: 0 });
+        move({ left: speed, right: speed * -1 });
       },
     },
     break: {
@@ -42,7 +44,7 @@ const speedSlider = document.getElementById("speed"),
     },
   };
 
-speedSlider.onchange = () => (speed = speedSlider.value);
+speedSlider.onchange = () => setSpeed(speedSlider.value);
 
 document.onkeydown = (event) => {
   console.log(event.key);
@@ -51,7 +53,8 @@ document.onkeydown = (event) => {
     a.keys.includes(event.key.toLowerCase())
   );
 
-  if (!action) return;
+  if ((moving && action.keys[0] !== " ") || !action) return;
+  moving = true;
 
   action.onPress(event);
   action.element.style.backgroundColor = "seagreen";
@@ -77,15 +80,36 @@ document.onkeyup = (event) => {
 };
 
 Object.values(controls).forEach((a) => {
-  let t;
-
-  const repeat = () => {
+  const onDown = (e) => {
+    e.preventDefault()
+    moving = true
+    a.onPress()
+    a.element.style.backgroundColor = "seagreen";
     console.log("click");
-    a.onPress();
-    t = setTimeout(() => repeat, 30);
-  };
+  }
+  a.element.onmousedown = onDown
+  a.element.ontouchstart = onDown
 
-  a.element.onmousedown = () => repeat();
-
-  a.element.onmouseup = () => clearTimeout(t);
+  const onUp = () => {
+    moving = false
+    a.element.style.backgroundColor = "lightseagreen";
+    setTimeout(() => {
+      if (!moving) {
+        move();
+        console.log("stop");
+      }
+    }, 200);
+  }
+  a.element.onmouseup = onUp
+  a.element.ontouchend = onUp
 });
+
+function setSpeed(s) {
+  speed = s
+  speedSlider.value = speed
+}
+
+document.onwheel = (event) => {
+  if (event.deltaY < 0) setSpeed(speed + 5)
+  else if (event.deltaY > 0) setSpeed(speed - 5)
+}
