@@ -1,91 +1,91 @@
-init()
+init();
 
-let speed = 0;
-let moving = false;
+let speed = 0,
+  moving = false;
 
-const up = document.getElementById("up");
-const down = document.getElementById("down");
-const left = document.getElementById("left");
-const right = document.getElementById("right");
-const space = document.getElementById("handbreak");
+const speedSlider = document.getElementById("speed"),
+  controls = {
+    up: {
+      element: document.getElementById("up"),
+      keys: ["arrowup", "w"],
+      onPress: (e) => {
+        move({ left: speed, right: speed });
+      },
+    },
+    down: {
+      element: document.getElementById("down"),
+      keys: ["arrowdown", "s"],
+      onPress: () => {
+        move({ left: speed, right: speed });
+      },
+    },
+    left: {
+      element: document.getElementById("left"),
+      keys: ["arrowleft", "a"],
+      onPress: () => {
+        move({ left: 0, right: speed });
+      },
+    },
+    right: {
+      element: document.getElementById("right"),
+      keys: ["arrowright", "d"],
+      onPress: () => {
+        move({ left: speed, right: 0 });
+      },
+    },
+    break: {
+      element: document.getElementById("handbreak"),
+      keys: [" "],
+      onPress: () => {
+        move();
+      },
+    },
+  };
 
-document.onkeydown=(event)=>{
-    console.log(event.key)
-    switch(event.key){
-        case 'w':
-            moving = true;
-            changeSpeed(2);
-            move({left:speed, right:speed});
-            up.style.backgroundColor = 'seagreen';
-        break
-        case 'a':
-            moving = true;
-            changeSpeed(2);
-            move({left:0,right:speed});
-            left.style.backgroundColor = 'seagreen';
-        break
-        case 's':
-            moving = true;
-            changeSpeed(-2);
-            move({left:speed, right:speed});
-            down.style.backgroundColor = 'seagreen';
-        break
-        case 'd':
-            moving = true;
-            changeSpeed(2);
-            move({left:speed,right:0});
-            right.style.backgroundColor = 'seagreen';
-        break
-        case ' ':
-            speed = 0;
-            move();
-            space.style.backgroundColor = 'seagreen';
-        break
+speedSlider.onchange = () => (speed = speedSlider.value);
+
+document.onkeydown = (event) => {
+  console.log(event.key);
+
+  const action = Object.values(controls).find((a) =>
+    a.keys.includes(event.key.toLowerCase())
+  );
+
+  if (!action) return;
+
+  action.onPress(event);
+  action.element.style.backgroundColor = "seagreen";
+};
+
+document.onkeyup = (event) => {
+  moving = false;
+
+  const action = Object.values(controls).find((a) =>
+    a.keys.includes(event.key.toLowerCase())
+  );
+
+  if (!action) return;
+
+  action.element.style.backgroundColor = "lightseagreen";
+
+  setTimeout(() => {
+    if (!moving) {
+      move();
+      console.log("stop");
     }
-}
+  }, 200);
+};
 
-function changeSpeed(s){
-    const new_speed = speed+s;
-    if(new_speed <= 100 && new_speed >= -100){
-        speed=new_speed;
-    }
-    else if(new_speed > 100){
-        speed = 100;
-    }
-    else{
-        speed = -100;
-    }
-    console.log(speed);
-}
+Object.values(controls).forEach((a) => {
+  let t;
 
-document.onkeyup=(event)=>{
-    moving = false;
-    switch(event.key){
-        case 'w':
-            up.style.backgroundColor = 'lightseagreen';
-        break;
-        case 'a':
-            left.style.backgroundColor = 'lightseagreen';
-        break;
-        case 's':
-            down.style.backgroundColor = 'lightseagreen';
-        break;
-        case 'd':
-            right.style.backgroundColor = 'lightseagreen';
-        break;
-        case ' ':
-            space.style.backgroundColor = 'lightseagreen'
-        break
-    }
-    setTimeout(()=>{
-        if(!moving){
-            speed=0;
-            move();
-            console.log('stop')   
-        }
-    },200)
-}
-
-document.getElementById("up").onmousedown(()=>{
+  const repeat = () => {
     console.log("click");
-})
+    a.onPress();
+    t = setTimeout(() => repeat, 30);
+  };
+
+  a.element.onmousedown = () => repeat();
+
+  a.element.onmouseup = () => clearTimeout(t);
+});
