@@ -1,6 +1,10 @@
-import { init, move } from "./lib.js"
-
-init();
+import { buzzer, init, LED, move } from "./lib.js";
+try {
+  init("192.168.0.1:5000");
+} catch (err) {
+  console.error(err);
+  alert("failed to connect to the C.U.M. servers. try again laterx")
+}
 
 let speed = 50,
   moving = false;
@@ -9,28 +13,28 @@ const speedSlider = document.getElementById("speed"),
   controls = {
     up: {
       element: document.getElementById("up"),
-      keys: ["arrowup", "w"],
+      keys: ["arrowup", "w", "k"],
       onPress: (e) => {
         move({ left: speed, right: speed });
       },
     },
     down: {
       element: document.getElementById("down"),
-      keys: ["arrowdown", "s"],
+      keys: ["arrowdown", "s", "j"],
       onPress: () => {
         move({ left: speed * -1, right: speed * -1 });
       },
     },
     left: {
       element: document.getElementById("left"),
-      keys: ["arrowleft", "a"],
+      keys: ["arrowleft", "a", "h"],
       onPress: () => {
         move({ left: speed * -1, right: speed });
       },
     },
     right: {
       element: document.getElementById("right"),
-      keys: ["arrowright", "d"],
+      keys: ["arrowright", "d", "l"],
       onPress: () => {
         move({ left: speed, right: speed * -1 });
       },
@@ -42,6 +46,23 @@ const speedSlider = document.getElementById("speed"),
         move();
       },
     },
+    LEDs: {
+      element: document.getElementById("leds"),
+      keys: ["q"],
+      onPress: () => {
+        LED(Math.floor(Math.random()), Math.floor(Math.random()), Math.floor(Math.random()));
+        console.log("asdadsssss")
+      }
+    },
+    horn: {
+      element: document.getElementById("horn"),
+      keys: ["e"],
+      onPress: () => {
+        buzzer({ ms: 1000 })
+        console.log("asdads")
+      },
+      onStop: () => { }
+    }
   };
 
 speedSlider.onchange = () => setSpeed(speedSlider.value);
@@ -73,7 +94,7 @@ document.onkeyup = (event) => {
 
   setTimeout(() => {
     if (!moving) {
-      move();
+      action.onStop?.() || move();
       console.log("stop");
     }
   }, 200);

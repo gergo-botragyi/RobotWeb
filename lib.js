@@ -1,8 +1,10 @@
 let socket;
-export const init = () => {
-    const ip = 'http://192.168.0.1:5000/io';
+export const init = (ip) => {
     const man = new io.Manager(ip);
     socket = man.socket('/io', {});
+    socket.on('connect', () => {
+        console.log('Connected!');
+    });
     return new Promise(res => socket.on('connect', res));
 };
 export const getSensorData = () => {
@@ -22,3 +24,11 @@ export const LED = ({ r = 0, g = 120, b = 180 } = {}) => {
 };
 export const stop = () => void socket.emit('stop');
 export const sleep = (ms) => new Promise(res => setTimeout(res, ms));
+export const exit = (stops = false) => {
+    if (stops)
+        stop();
+    close();
+};
+export const buzzer = ({ pw = 0, ms = 0 } = {}) => {
+    socket.emit('buzzer', { pw, ms });
+}

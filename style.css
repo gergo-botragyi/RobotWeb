@@ -31,6 +31,10 @@ body{
     height: 100px;
 }
 
+.special > p{
+    font-size: 3em;
+}
+
 #cim{
     width: 500px;
     margin: 0 auto;
@@ -58,6 +62,29 @@ input[type=range]::-webkit-slider-runnable-track{
 #speed{
     padding: 20px 0 20px 0;
     width: 900px;
+}
+
+.special{
+    width: 150px;
+    height: 150px;
+    background-color:turquoise;
+    border: 1px solid black;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#leds{
+    margin-right: 75px;
+}
+
+#horn{
+    margin-left: 75px;
+}
+
+.red{
+    color: red;
 }
 
 @media screen and (max-width: 965px) {
@@ -117,5 +144,23 @@ input[type=range]::-webkit-slider-runnable-track{
     #speed{
         padding: 10px 0 10px 0;
         width: 300px;
+    }
+
+    .special{
+        width: 50px;
+        height: 50px;
+    }
+
+    .special > p{
+        font-size: 1em;
+        font-weight: 900;
+    }
+
+    #leds{
+        margin-right: 25px;
+    }
+    
+    #horn{
+        margin-left: 25px;
     }
 }
