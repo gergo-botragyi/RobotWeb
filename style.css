@@ -24,7 +24,7 @@ body{
     align-items: center;
     
 }
-.gomb > p{
+.gomb > p, #handbreak > p{
     font-size: 5em;
     width: 100px;
     height: 100px;
@@ -36,15 +36,20 @@ body{
     text-align: center;
     font-size: 2em;
     font-family: 'Press Start 2P', cursive;
+    padding: 10px 0 10px 0;
 }
 
 #handbreak{
     width: 900px;
-    height: 300px;
+    height: 150px;
     background-color: lightseagreen;
     border: 1px solid black;
     text-align: center;
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+#kezi{
+    padding-top: 50px;
 }

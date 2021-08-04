@@ -7,6 +7,7 @@ const up = document.getElementById("up");
 const down = document.getElementById("down");
 const left = document.getElementById("left");
 const right = document.getElementById("right");
+const space = document.getElementById("handbreak");
 
 document.onkeydown=(event)=>{
     console.log(event.key)
@@ -38,6 +39,7 @@ document.onkeydown=(event)=>{
         case ' ':
             speed = 0;
             move();
+            space.style.backgroundColor = 'seagreen';
         break
     }
 }
@@ -71,6 +73,9 @@ document.onkeyup=(event)=>{
         case 'd':
             right.style.backgroundColor = 'lightseagreen';
         break;
+        case ' ':
+            space.style.backgroundColor = 'lightseagreen'
+        break
     }
     setTimeout(()=>{
         if(!moving){
