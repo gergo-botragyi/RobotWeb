@@ -1,4 +1,4 @@
-import confetti from "https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.module.mjs";
+import confetti from "./confetti.mjs";
 import { buzzer, init, LED, move } from "./lib.js";
 
 // connect to server
