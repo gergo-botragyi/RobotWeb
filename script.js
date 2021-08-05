@@ -1,3 +1,4 @@
+import confetti from "https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.module.mjs";
 import { buzzer, init, LED, move } from "./lib.js";
 
 // connect to server
@@ -5,18 +6,19 @@ try {
   init("192.168.0.1:5000");
 } catch (err) {
   console.error(err);
-  alert("failed to connect to the C.U.M. servers. try again later")
+  alert("failed to connect to the C.U.M. servers. try again later");
 }
 
 let speed = 50,
   moving = false;
 
 const speedSlider = document.getElementById("speed"),
-// define the controls on the site.
+  // define the controls on the site.
   controls = {
     up: {
-      element: document.getElementById("up"),
-      keys: ["arrowup", "w", "k"],
+      element: document.getElementById("up"), // clickable html element
+      keys: ["arrowup", "w", "k"], // keyboard shortcuts
+      // function to run
       onPress: (e) => {
         move({ left: speed, right: speed });
       },
@@ -52,23 +54,28 @@ const speedSlider = document.getElementById("speed"),
     LEDs: {
       element: document.getElementById("leds"),
       keys: ["q"],
-      color: "turquoise",
+      color: "turquoise", // button background color
       onPress: () => {
-        LED({ r: Math.round(Math.random()), g: Math.round(Math.random()), b: Math.round(Math.random()) });
-      }
+        LED({
+          r: Math.round(Math.random()),
+          g: Math.round(Math.random()),
+          b: Math.round(Math.random()),
+        });
+      },
     },
     horn: {
       element: document.getElementById("horn"),
       keys: ["e"],
       color: "turquoise",
       onPress: () => {
-        buzzer({ pw: 50, ms: 1000 })
+        buzzer({ pw: 50, ms: 1000 });
       },
+      // function to run when released
       onStop: () => {
-        buzzer({ pw: 100, ms: 1 })
+        buzzer({ pw: 100, ms: 1 });
         console.log("buzzer stopped");
-      }
-    }
+      },
+    },
   };
 
 speedSlider.onchange = () => setSpeed(speedSlider.value);
@@ -116,17 +123,17 @@ document.onkeyup = (event) => {
 // MOUSE AND TOUCH CONTROLS
 Object.values(controls).forEach((a) => {
   const onDown = (e) => {
-    e.preventDefault()
-    moving = true
-    a.onPress()
+    e.preventDefault();
+    moving = true;
+    a.onPress();
     a.element.style.backgroundColor = "seagreen";
     console.log("click");
-  }
-  a.element.onmousedown = onDown
-  a.element.ontouchstart = onDown
+  };
+  a.element.onmousedown = onDown;
+  a.element.ontouchstart = onDown;
 
   const onUp = () => {
-    moving = false
+    moving = false;
     a.element.style.backgroundColor = a.color || "lightseagreen";
     setTimeout(() => {
       if (!moving) {
@@ -134,18 +141,69 @@ Object.values(controls).forEach((a) => {
         console.log("stop");
       }
     }, 200);
-  }
-  a.element.onmouseup = onUp
-  a.element.ontouchend = onUp
+  };
+  a.element.onmouseup = onUp;
+  a.element.ontouchend = onUp;
 });
 
 // set the slider when the speed changes
 function setSpeed(s) {
-  speed = s
-  speedSlider.value = speed
+  speed = s;
+  speedSlider.value = speed;
 }
 // change speed with the mouse wheel
 document.onwheel = (event) => {
-  if (event.deltaY < 0) setSpeed(speed + 5)
-  else if (event.deltaY > 0) setSpeed(speed - 5)
-}
+  if (event.deltaY < 0) setSpeed(speed + 5);
+  else if (event.deltaY > 0) setSpeed(speed - 5);
+};
+
+// EASTER EGG 🥛🎉😳
+let confettiLvl = 0;
+const confettiElements = Array.from(document.querySelectorAll(".red")).sort(
+    (x) => x.id
+  ),
+  confettiActions = [
+    () => {
+      console.log({ cumLvl: confettiLvl });
+      confettiLvl === 0 && confettiLvl++;
+    },
+    () => {
+      console.log({ cumLvl: confettiLvl });
+      confettiLvl === 1 ? confettiLvl++ : (confettiLvl = 0);
+    },
+    async () => {
+      console.log({ cumLvl: confettiLvl });
+      if (confettiLvl === 2) {
+        confettiLvl++;
+
+        const end = Date.now() + 5 * 1000,
+          colors = ["#18b6d6", "#46b31b"];
+
+        await (async function frame() {
+          const p1 = confetti({
+              particleCount: 2,
+              angle: 60,
+              spread: 55,
+              origin: { x: 0 },
+              colors,
+            }),
+            p2 = confetti({
+              particleCount: 2,
+              angle: 120,
+              spread: 55,
+              origin: { x: 1 },
+              colors,
+            });
+
+          if (Date.now() < end) {
+            requestAnimationFrame(frame);
+          }
+
+          return Promise.all([p1, p2]);
+        })();
+      }
+      confettiLvl = 0;
+    },
+  ];
+
+confettiElements.forEach((c, i) => (c.onclick = confettiActions[i]));
