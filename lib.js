@@ -1,3 +1,6 @@
+// this code talks to the robot
+// https://github.com/Kris030/roblib
+
 let socket;
 export const init = (ip) => {
     const man = new io.Manager(ip);
@@ -21,6 +24,7 @@ export const LED = ({ r = 0, g = 120, b = 180 } = {}) => {
     if (min < 0 || max > 255)
         throw `Values should be between 0 and 255`;
     socket.emit('led', { r, g, b });
+    console.log({ r, g, b });
 };
 export const stop = () => void socket.emit('stop');
 export const sleep = (ms) => new Promise(res => setTimeout(res, ms));
@@ -31,4 +35,5 @@ export const exit = (stops = false) => {
 };
 export const buzzer = ({ pw = 0, ms = 0 } = {}) => {
     socket.emit('buzzer', { pw, ms });
+    console.log({ pw, ms })
 }

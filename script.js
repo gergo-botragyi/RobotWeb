@@ -1,15 +1,18 @@
 import { buzzer, init, LED, move } from "./lib.js";
+
+// connect to server
 try {
   init("192.168.0.1:5000");
 } catch (err) {
   console.error(err);
-  alert("failed to connect to the C.U.M. servers. try again laterx")
+  alert("failed to connect to the C.U.M. servers. try again later")
 }
 
 let speed = 50,
   moving = false;
 
 const speedSlider = document.getElementById("speed"),
+// define the controls on the site.
   controls = {
     up: {
       element: document.getElementById("up"),
@@ -51,7 +54,7 @@ const speedSlider = document.getElementById("speed"),
       keys: ["q"],
       color: "turquoise",
       onPress: () => {
-        LED(Math.floor(Math.random()), Math.floor(Math.random()), Math.floor(Math.random()));
+        LED({ r: Math.round(Math.random()), g: Math.round(Math.random()), b: Math.round(Math.random()) });
       }
     },
     horn: {
@@ -59,21 +62,29 @@ const speedSlider = document.getElementById("speed"),
       keys: ["e"],
       color: "turquoise",
       onPress: () => {
-        buzzer({ ms: 1000 })
+        buzzer({ pw: 50, ms: 1000 })
       },
-      onStop: () => { }
+      onStop: () => {
+        buzzer({ pw: 100, ms: 1 })
+        console.log("buzzer stopped");
+      }
     }
   };
 
 speedSlider.onchange = () => setSpeed(speedSlider.value);
 
+// KEYBOARD CONTROLS
+
+// a key was pressed
 document.onkeydown = (event) => {
   console.log(event.key);
 
+  // decide what to do based on what key was pressed
   const action = Object.values(controls).find((a) =>
     a.keys.includes(event.key.toLowerCase())
   );
 
+  // dont move it already moving
   if ((moving && action.keys[0] !== " ") || !action) return;
   moving = true;
 
@@ -81,6 +92,7 @@ document.onkeydown = (event) => {
   action.element.style.backgroundColor = "seagreen";
 };
 
+// a key was released
 document.onkeyup = (event) => {
   moving = false;
 
@@ -92,6 +104,7 @@ document.onkeyup = (event) => {
 
   action.element.style.backgroundColor = action.color || "lightseagreen";
 
+  // stop the robot after 200ms
   setTimeout(() => {
     if (!moving) {
       action.onStop?.() || move();
@@ -100,6 +113,7 @@ document.onkeyup = (event) => {
   }, 200);
 };
 
+// MOUSE AND TOUCH CONTROLS
 Object.values(controls).forEach((a) => {
   const onDown = (e) => {
     e.preventDefault()
@@ -113,10 +127,10 @@ Object.values(controls).forEach((a) => {
 
   const onUp = () => {
     moving = false
-    a.element.style.backgroundColor = "lightseagreen";
+    a.element.style.backgroundColor = a.color || "lightseagreen";
     setTimeout(() => {
       if (!moving) {
-        move();
+        a.onStop?.() || move();
         console.log("stop");
       }
     }, 200);
@@ -125,11 +139,12 @@ Object.values(controls).forEach((a) => {
   a.element.ontouchend = onUp
 });
 
+// set the slider when the speed changes
 function setSpeed(s) {
   speed = s
   speedSlider.value = speed
 }
-
+// change speed with the mouse wheel
 document.onwheel = (event) => {
   if (event.deltaY < 0) setSpeed(speed + 5)
   else if (event.deltaY > 0) setSpeed(speed - 5)
