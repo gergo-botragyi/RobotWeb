@@ -19,21 +19,23 @@ export const move = ({ left = 0, right = 0 } = {}) => {
         throw `Values should be between -100 and 100`;
     socket.emit('move', { left, right });
 };
-export const LED = ({ r = 0, g = 120, b = 180 } = {}) => {
-    const min = Math.min(r, g, b), max = Math.max(r, g, b);
-    if (min < 0 || max > 255)
-        throw `Values should be between 0 and 255`;
+export const LED = ({ r = false, g = false, b = false } = {}) => {
     socket.emit('led', { r, g, b });
-    console.log({ r, g, b });
+};
+export const buzzer = (pw = 100) => {
+    if (pw < 0 || pw > 100)
+        throw 'PW values should be between 0 and 100';
+    socket.emit('buzzer', { pw });
 };
 export const stop = () => void socket.emit('stop');
 export const sleep = (ms) => new Promise(res => setTimeout(res, ms));
+export const servo = (absoluteDegree) => {
+    if (absoluteDegree < -90 || absoluteDegree > 90)
+        throw 'Values should be between -90 and 90';
+    socket.emit('servo', { degree: absoluteDegree });
+};
 export const exit = (stops = false) => {
     if (stops)
         stop();
-    close();
+    socket.close();
 };
-export const buzzer = ({ pw = 0, ms = 0 } = {}) => {
-    socket.emit('buzzer', { pw, ms });
-    console.log({ pw, ms })
-}

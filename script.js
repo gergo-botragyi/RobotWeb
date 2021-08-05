@@ -56,11 +56,13 @@ const speedSlider = document.getElementById("speed"),
       keys: ["q"],
       color: "turquoise", // button background color
       onPress: () => {
-        LED({
-          r: Math.round(Math.random()),
-          g: Math.round(Math.random()),
-          b: Math.round(Math.random()),
-        });
+        const led = {
+          r: !!Math.round(Math.random()),
+          g: !!Math.round(Math.random()),
+          b: !!Math.round(Math.random()),
+        };
+        console.log(led);
+        LED(led);
       },
     },
     horn: {
@@ -68,11 +70,11 @@ const speedSlider = document.getElementById("speed"),
       keys: ["e"],
       color: "turquoise",
       onPress: () => {
-        buzzer({ pw: 50, ms: 1000 });
+        buzzer(25);
       },
       // function to run when released
       onStop: () => {
-        buzzer({ pw: 100, ms: 1 });
+        buzzer();
         console.log("buzzer stopped");
       },
     },
@@ -160,8 +162,8 @@ document.onwheel = (event) => {
 // EASTER EGG 🥛🎉😳
 let confettiLvl = 0;
 const confettiElements = Array.from(document.querySelectorAll(".red")).sort(
-    (x) => x.id
-  ),
+  (x) => x.id
+),
   confettiActions = [
     () => {
       console.log({ cumLvl: confettiLvl });
@@ -181,12 +183,12 @@ const confettiElements = Array.from(document.querySelectorAll(".red")).sort(
 
         await (async function frame() {
           const p1 = confetti({
-              particleCount: 2,
-              angle: 60,
-              spread: 55,
-              origin: { x: 0 },
-              colors,
-            }),
+            particleCount: 2,
+            angle: 60,
+            spread: 55,
+            origin: { x: 0 },
+            colors,
+          }),
             p2 = confetti({
               particleCount: 2,
               angle: 120,
