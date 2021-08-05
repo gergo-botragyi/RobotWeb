@@ -49,17 +49,17 @@ const speedSlider = document.getElementById("speed"),
     LEDs: {
       element: document.getElementById("leds"),
       keys: ["q"],
+      color: "turquoise",
       onPress: () => {
         LED(Math.floor(Math.random()), Math.floor(Math.random()), Math.floor(Math.random()));
-        console.log("asdadsssss")
       }
     },
     horn: {
       element: document.getElementById("horn"),
       keys: ["e"],
+      color: "turquoise",
       onPress: () => {
         buzzer({ ms: 1000 })
-        console.log("asdads")
       },
       onStop: () => { }
     }
@@ -90,7 +90,7 @@ document.onkeyup = (event) => {
 
   if (!action) return;
 
-  action.element.style.backgroundColor = "lightseagreen";
+  action.element.style.backgroundColor = action.color || "lightseagreen";
 
   setTimeout(() => {
     if (!moving) {
